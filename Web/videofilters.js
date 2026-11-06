@@ -106,7 +106,18 @@
     gammaNodes.forEach(function (n) { n.setAttribute('exponent', exponent); });
     var f = filterString();
     var videos = document.querySelectorAll('video');
-    for (var i = 0; i < videos.length; i++) videos[i].style.filter = f;
+    for (var i = 0; i < videos.length; i++) {
+      var st = videos[i].style;
+      if (f) {
+        // "important" so this beats other plugins or themes that force "filter: none !important"
+        // on videos; the transition is switched off so the sliders react instantly.
+        st.setProperty('filter', f, 'important');
+        st.setProperty('transition', 'none', 'important');
+      } else {
+        st.removeProperty('filter');
+        st.removeProperty('transition');
+      }
+    }
   }
 
   // ---- UI -----------------------------------------------------------------
