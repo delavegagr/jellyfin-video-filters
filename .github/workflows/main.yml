@@ -1,0 +1,31 @@
+name: Build plugin
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish
+        run: dotnet publish Jellyfin.Plugin.VideoFilters.csproj -c Release -o out
+
+      - name: Package
+        run: |
+          mkdir -p package
+          cp out/Jellyfin.Plugin.VideoFilters.dll package/
+          cp meta.json package/
+          cd package
+          zip -r ../Jellyfin.Plugin.VideoFilters_1.0.0.0.zip .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Jellyfin.Plugin.VideoFilters
+          path: Jellyfin.Plugin.VideoFilters_1.0.0.0.zip
