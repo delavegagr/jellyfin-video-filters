@@ -1,6 +1,8 @@
 Disclaimer : 
 I am not a coder, I created this project with Claude for my own personal usage, I will try to keep it updated
 
+![ui.png](ui.png)
+
 # Jellyfin Video Filters plugin
 
 Live brightness, contrast, saturation, gamma, hue, sepia and grayscale controls for the Jellyfin **web player**, with presets. Everything runs in the browser. There is no server processing, no AI and no extra container.
