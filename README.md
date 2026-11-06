@@ -17,23 +17,6 @@ This source was written without a .NET compiler, so it has **not been compiled o
 
 Built for **Jellyfin 12.x** (net10.0, Jellyfin.Controller 12.0.0, targetAbi 12.0.0.0).
 
-### Option A: GitHub Actions (no .NET install needed)
-
-1. Create a new GitHub repository and push this folder to it.
-2. Open the **Actions** tab, run **Build plugin**, and download the `Jellyfin.Plugin.VideoFilters` artifact (a zip containing the DLL and `meta.json`).
-
-### Option B: locally
-
-Install the .NET 10 SDK, then in this folder:
-
-```
-dotnet publish Jellyfin.Plugin.VideoFilters.csproj -c Release -o out
-```
-
-The plugin is `out/Jellyfin.Plugin.VideoFilters.dll`.
-
-## Install on Unraid
-
 1. Open your Jellyfin appdata folder (for example `/mnt/user/appdata/jellyfin/`) and find the `plugins` folder. In the official image it is `plugins/`; in the LinuxServer image it is usually `data/plugins/`. An existing plugin's folder is the easiest way to confirm.
 2. Create a folder `VideoFilters` inside it and put `Jellyfin.Plugin.VideoFilters.dll` and `meta.json` in it.
 3. Restart the Jellyfin container.
