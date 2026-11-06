@@ -1,0 +1,17 @@
+{
+  "guid": "6f1c2a4e-3b7d-4c59-9a1e-8d2f5b7c0e13",
+  "name": "Video Filters",
+  "description": "Live brightness, contrast, saturation, gamma, hue, sepia and grayscale controls for the web player.",
+  "overview": "Client-side video filters with presets. No server processing, no AI.",
+  "owner": "local",
+  "category": "General",
+  "version": "1.0.0.0",
+  "changelog": "Initial release.",
+  "targetAbi": "12.0.0.0",
+  "timestamp": "2026-11-06T00:00:00Z",
+  "status": "Active",
+  "autoUpdate": false,
+  "assemblies": [
+    "Jellyfin.Plugin.VideoFilters.dll"
+  ]
+}
