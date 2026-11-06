@@ -6,6 +6,7 @@
     "overview": "Client-side video filters with presets and per-slider reset. No server processing, no AI.",
     "owner": "delavegagr",
     "category": "General",
+    "imageUrl": "https://raw.githubusercontent.com/delavegagr/jellyfin-video-filters/main/logo.png",
     "versions": [
       {
         "version": "1.0.1.0",
