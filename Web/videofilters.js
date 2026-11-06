@@ -139,7 +139,7 @@
     var s = document.createElement('style');
     s.id = 'jfvf-style';
     s.textContent =
-      '#jfvf-panel{position:fixed;right:16px;bottom:110px;width:280px;z-index:2147483000;' +
+      '#jfvf-panel{position:fixed;right:16px;bottom:110px;width:320px;z-index:2147483000;' +
       'background:rgba(18,18,22,.94);color:#eee;border:1px solid rgba(255,255,255,.15);' +
       'border-radius:10px;padding:12px 14px;font:13px/1.3 system-ui,sans-serif;' +
       'box-shadow:0 8px 30px rgba(0,0,0,.5);display:none}' +
@@ -147,9 +147,11 @@
       '#jfvf-panel .jfvf-head label{font-weight:400;font-size:12px;display:flex;gap:4px;align-items:center}' +
       '#jfvf-panel button,#jfvf-panel select{background:#2b2b33;color:#eee;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;font-size:12px}' +
       '#jfvf-panel .jfvf-close{cursor:pointer;margin-left:8px}' +
-      '#jfvf-panel .jfvf-row{display:grid;grid-template-columns:78px 1fr 44px;align-items:center;gap:6px;margin:6px 0}' +
+      '#jfvf-panel .jfvf-row{display:grid;grid-template-columns:78px 1fr 42px 24px;align-items:center;gap:6px;margin:6px 0}' +
       '#jfvf-panel .jfvf-row label{cursor:pointer}' +
       '#jfvf-panel .jfvf-val{text-align:right;font-variant-numeric:tabular-nums;opacity:.8}' +
+      '#jfvf-panel .jfvf-reset{width:24px;height:24px;padding:0;line-height:1;font-size:14px;cursor:pointer}' +
+      '#jfvf-panel .jfvf-reset[disabled]{opacity:.3;cursor:default}' +
       '#jfvf-panel input[type=range]{width:100%}' +
       '#jfvf-panel .jfvf-foot{display:flex;gap:8px;margin-top:10px;align-items:center}' +
       '#jfvf-panel .jfvf-foot select{flex:1}' +
@@ -157,11 +159,18 @@
     document.head.appendChild(s);
   }
 
+  // The reset button is dimmed while its slider is already at the neutral value.
+  function refreshReset(key) {
+    var r = sliderRefs[key];
+    if (r) r.reset.disabled = Math.abs(state[key] - DEFAULTS[key]) < 1e-6;
+  }
+
   function syncSliders() {
     CONTROLS.forEach(function (c) {
       var r = sliderRefs[c[0]];
       r.input.value = state[c[0]];
       r.val.textContent = fmt(c[0]);
+      refreshReset(c[0]);
     });
     if (presetSelect) presetSelect.value = '__custom';
   }
@@ -205,7 +214,7 @@
       var row = el('div', 'jfvf-row');
       var label = el('label');
       label.textContent = c[1];
-      label.title = 'Double-click to reset';
+      label.title = 'Double-click to reset (or use the ↺ button)';
       var input = el('input');
       input.type = 'range';
       input.min = c[2];
@@ -214,23 +223,49 @@
       input.value = state[key];
       var val = el('span', 'jfvf-val');
       val.textContent = fmt(key);
+      var resetBtn = el('button', 'jfvf-reset');
+      resetBtn.type = 'button';
+      resetBtn.textContent = '↺';
+      resetBtn.title = 'Reset ' + c[1];
+
+      // Sticky neutral point: while dragging with the mouse or a finger, the slider snaps
+      // to the neutral value when it gets close to it. Keyboard steps are not snapped.
+      var snap = (c[3] - c[2]) * 0.03;
+      var dragging = false;
+      input.addEventListener('pointerdown', function () { dragging = true; });
+      ['pointerup', 'pointercancel'].forEach(function (evt) {
+        window.addEventListener(evt, function () { dragging = false; });
+      });
+
       input.addEventListener('input', function () {
-        state[key] = parseFloat(input.value);
+        var v = parseFloat(input.value);
+        if (dragging && Math.abs(v - DEFAULTS[key]) <= snap) {
+          v = DEFAULTS[key];
+          input.value = v;
+        }
+        state[key] = v;
         val.textContent = fmt(key);
+        refreshReset(key);
         if (presetSelect) presetSelect.value = '__custom';
         save();
         apply();
       });
-      label.addEventListener('dblclick', function () {
+
+      function resetThis() {
         state[key] = DEFAULTS[key];
         syncSliders();
         save();
         apply();
-      });
-      sliderRefs[key] = { input: input, val: val };
+      }
+      resetBtn.addEventListener('click', resetThis);
+      label.addEventListener('dblclick', resetThis);
+
+      sliderRefs[key] = { input: input, val: val, reset: resetBtn };
       row.appendChild(label);
       row.appendChild(input);
       row.appendChild(val);
+      row.appendChild(resetBtn);
+      refreshReset(key);
       panel.appendChild(row);
     });
 
@@ -274,7 +309,7 @@
     panel.appendChild(foot);
 
     var hint = el('div', 'jfvf-hint');
-    hint.textContent = 'Alt+B toggles this panel. Double-click a label to reset it.';
+    hint.textContent = 'Alt+B toggles this panel. Sliders stick to the neutral point while you drag.';
     panel.appendChild(hint);
 
     document.body.appendChild(panel);
