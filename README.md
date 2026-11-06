@@ -12,6 +12,13 @@ Live brightness, contrast, saturation, gamma, hue, sepia and grayscale controls 
 - As a second route, it also tries to write the same tag into `index.html` at startup. If the folder is read-only you get a harmless warning in the log.
 - The script adds a filter button next to the subtitles button in the player (or press **Alt+B**). Settings are saved per browser.
 
+## Installation
+
+1. Open your Jellyfin appdata folder (for example `/mnt/user/appdata/jellyfin/`) and find the `plugins` folder. In the official image it is `plugins/`; in the LinuxServer image it is usually `data/plugins/`. An existing plugin's folder is the easiest way to confirm.
+2. Create a folder `VideoFilters` inside it and put `Jellyfin.Plugin.VideoFilters.dll` and `meta.json` in it.
+3. Restart the Jellyfin container.
+4. Hard-refresh the browser (Ctrl+F5) and play a video. In the Jellyfin log you should see a line starting with `Video Filters`.
+
 ## Status
 
 Working in Jellyfin 12.4 
