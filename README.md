@@ -1,4 +1,4 @@
-Disclaimer: 
+Disclaimer : 
 I am not a coder, I created this project with Claude for my own personal usage, I will try to keep it updated
 
 # Jellyfin Video Filters plugin
